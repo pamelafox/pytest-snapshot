@@ -151,7 +151,9 @@ class Snapshot:
         else:
             raise TypeError('value must be str or bytes')
 
-    def assert_match(self, value: Union[str, bytes], snapshot_name: Union[str, Path], message_generator: Callable = None):
+    def assert_match(self, value: Union[str, bytes],
+                     snapshot_name: Union[str, Path] = 'snapshot.txt',
+                     message_generator: Union[Callable, None] = None):
         """
         Asserts that ``value`` equals the current value of the snapshot with the given ``snapshot_name``.
 
