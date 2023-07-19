@@ -197,7 +197,7 @@ class Snapshot:
                                         '  (run pytest with --snapshot-update to update snapshots)\n{}'.format(
                                             shorten_path(snapshot_path), snapshot_diff_msg)
                     if message_generator is not None:
-                        snapshot_diff_msg += message_generator(value, expected_value)
+                        snapshot_diff_msg = message_generator(value, expected_value)
                     raise AssertionError(snapshot_diff_msg)
             else:
                 raise AssertionError(
