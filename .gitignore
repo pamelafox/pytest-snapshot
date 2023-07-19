@@ -75,3 +75,4 @@ target/
 .python-version
 
 pytest_snapshot/_version.py
+.venv
