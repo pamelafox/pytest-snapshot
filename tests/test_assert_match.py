@@ -92,7 +92,7 @@ def test_assert_match_failure_bytes(request, testdir, basic_case_dir):
     ])
     assert result.ret == 1
 
-def test_assert_match_additional_message(request, testdir, basic_case_dir):
+def test_assert_match_message_generator(request, testdir, basic_case_dir):
     testdir.makepyfile(r"""
         def test_sth(snapshot):
             snapshot.snapshot_dir = 'case_dir'
@@ -101,14 +101,7 @@ def test_assert_match_additional_message(request, testdir, basic_case_dir):
     result = runpytest_with_assert_mode(testdir, request, '-v', '--assert=rewrite')
     result.stdout.fnmatch_lines([
         '*::test_sth FAILED*',
-        r">* snapshot.assert_match('the INCORRECT value of snapshot1.txt\n', 'snapshot1.txt')",
-        'E* AssertionError: value does not match the expected value in snapshot case_dir?snapshot1.txt',
-        "E*   (run pytest with --snapshot-update to update snapshots)",
-        "E* assert * == *",
-        "E* - the valuÉ of snapshot1.txt",
-        "E* ?         ^",
-        "E* + the INCORRECT value of snapshot1.txt",
-        "E* ?    ++++++++++     ^",
+        'E* AssertionError: x and y are different'
     ])
     assert result.ret == 1
 
