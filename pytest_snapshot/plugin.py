@@ -2,7 +2,7 @@ import operator
 import os
 import re
 from pathlib import Path
-from typing import List, Union, Callable
+from typing import Union, Callable
 
 import pytest
 import _pytest.python

@@ -92,11 +92,13 @@ def test_assert_match_failure_bytes(request, testdir, basic_case_dir):
     ])
     assert result.ret == 1
 
+
 def test_assert_match_message_generator(request, testdir, basic_case_dir):
     testdir.makepyfile(r"""
         def test_sth(snapshot):
             snapshot.snapshot_dir = 'case_dir'
-            snapshot.assert_match('the INCORRECT value of snapshot1.txt\n', 'snapshot1.txt', message_generator=lambda x, y: f'x and y are different')
+            snapshot.assert_match('the INCORRECT value of snapshot1.txt\n', 'snapshot1.txt',
+                       message_generator=lambda x, y: f'x and y are different')
     """)
     result = runpytest_with_assert_mode(testdir, request, '-v', '--assert=rewrite')
     result.stdout.fnmatch_lines([
@@ -104,6 +106,24 @@ def test_assert_match_message_generator(request, testdir, basic_case_dir):
         'E* AssertionError: x and y are different'
     ])
     assert result.ret == 1
+
+
+def test_assert_match_message_generator_xy(request, testdir, basic_case_dir):
+    testdir.makepyfile(r"""
+        def test_sth(snapshot):
+            snapshot.snapshot_dir = 'case_dir'
+            snapshot.assert_match('the INCORRECT value of snapshot1.txt\n', 'snapshot1.txt',
+                       message_generator=lambda x, y: f'{x} and {y} are different')
+    """)
+    result = runpytest_with_assert_mode(testdir, request, '-v', '--assert=rewrite')
+    result.stdout.fnmatch_lines([
+        '*::test_sth FAILED*',
+        'E* AssertionError: the INCORRECT value of snapshot1.txt',
+        'E* and the valuÉ of snapshot1.txt',
+        'E* are different'
+    ])
+    assert result.ret == 1
+
 
 @pytest.mark.skipif(simple_version_parse(pytest.__version__) < (5, 0, 0), reason="consecutive flag not supported.")
 def test_assert_match_failure_assert_plain(request, testdir, basic_case_dir):
