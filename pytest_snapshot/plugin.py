@@ -2,7 +2,7 @@ import operator
 import os
 import re
 from pathlib import Path
-from typing import List, Union
+from typing import Union, Callable
 
 import pytest
 import _pytest.python
@@ -151,7 +151,9 @@ class Snapshot:
         else:
             raise TypeError('value must be str or bytes')
 
-    def assert_match(self, value: Union[str, bytes], snapshot_name: Union[str, Path]):
+    def assert_match(self, value: Union[str, bytes],
+                     snapshot_name: Union[str, Path] = 'snapshot.txt',
+                     message_generator: Union[Callable, None] = None):
         """
         Asserts that ``value`` equals the current value of the snapshot with the given ``snapshot_name``.
 
@@ -196,6 +198,8 @@ class Snapshot:
                     snapshot_diff_msg = 'value does not match the expected value in snapshot {}\n' \
                                         '  (run pytest with --snapshot-update to update snapshots)\n{}'.format(
                                             shorten_path(snapshot_path), snapshot_diff_msg)
+                    if message_generator is not None:
+                        snapshot_diff_msg = message_generator(value, expected_value)
                     raise AssertionError(snapshot_diff_msg)
             else:
                 raise AssertionError(
